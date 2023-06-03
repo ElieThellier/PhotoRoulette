@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "801101921226",
+    "firebase_url": "https://photoroulette-43c4f-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "photoroulette-43c4f",
+    "storage_bucket": "photoroulette-43c4f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:801101921226:android:fc6b20e9edde6b6ee96d33",
+        "android_client_info": {
+          "package_name": "com.example.photoroulette"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "801101921226-5kqi2t8hach0emc1l9d69cbn18aaeg37.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjCbD6QKknyrQ6IShd8-mRt4oWBPLCI5g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "801101921226-5kqi2t8hach0emc1l9d69cbn18aaeg37.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
