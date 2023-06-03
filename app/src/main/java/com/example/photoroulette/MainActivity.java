@@ -105,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Check lobbies and delete empty ones
         checkAndDeleteEmptyLobbies();
+        deleteUnusedFiles();
     }
 
     private void checkAndDeleteEmptyLobbies() {
@@ -137,6 +138,100 @@ public class MainActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 // Handle any errors that occur during data retrieval
             }
+        });
+    }
+    private void deleteUnusedFiles() {
+        // Get Firebase Storage reference
+        StorageReference storageRef = storage.getReference();
+
+        // Get Firebase Realtime Database reference to the "lobbies" node
+        DatabaseReference databaseRef = database.getReference().child("lobbies");
+
+        List<StorageReference> foldersToDelete = new ArrayList<>();
+
+        // Get a list of all files and folders in Firebase Storage
+        storageRef.listAll().addOnSuccessListener(listResult -> {
+            // Retrieve all existing lobbies from the database
+            databaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    List<String> existingLobbies = new ArrayList<>();
+
+                    for (DataSnapshot lobbySnapshot : dataSnapshot.getChildren()) {
+                        existingLobbies.add(lobbySnapshot.getKey());
+                    }
+
+                    // Iterate through each folder
+                    for (StorageReference item : listResult.getPrefixes()) {
+                        // Extract the folder name
+                        String folderName = item.getName();
+
+                        // Check if the folder name exists in the existing lobbies list
+                        if (!existingLobbies.contains(folderName)) {
+                            foldersToDelete.add(item);
+                            Log.d("DeleteUnusedFiles", "Folder to delete: " + folderName);
+                        }
+                    }
+
+                    // Delete the folders
+                    deleteFolders(storageRef, foldersToDelete);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Handle any errors that occur during data retrieval
+                }
+            });
+
+        }).addOnFailureListener(e -> {
+            // Handle any errors that occur while listing files
+            Log.w("DeleteUnusedFiles", "Failed to list files and folders: " + e.getMessage());
+        });
+    }
+
+    private void deleteFolders(StorageReference storageRef, List<StorageReference> foldersToDelete) {
+        // Delete each folder in the list
+        for (StorageReference folderRef : foldersToDelete) {
+            Log.d("DeleteFolders", "Folder to delete: " + folderRef.getName());
+
+            // Delete the contents of the folder recursively
+            deleteFolderContents(folderRef);
+
+            // Delete the folder
+            folderRef.delete().addOnSuccessListener(aVoid -> {
+                // Folder deleted successfully
+                Log.d("DeleteFolders", "Folder deleted: " + folderRef.getName());
+            }).addOnFailureListener(exception -> {
+                // Folder deletion failed
+                Log.e("DeleteFolders", "Failed to delete folder: " + folderRef.getName(), exception);
+            });
+        }
+    }
+
+    private void deleteFolderContents(StorageReference folderRef) {
+        // List all items (files and sub-folders) in the folder
+        folderRef.listAll().addOnSuccessListener(listResult -> {
+            List<StorageReference> items = listResult.getItems();
+            List<StorageReference> prefixes = listResult.getPrefixes();
+
+            // Delete each file in the folder
+            for (StorageReference item : items) {
+                item.delete().addOnSuccessListener(aVoid -> {
+                    // File deleted successfully
+                    Log.d("DeleteFolders", "File deleted: " + item.getName());
+                }).addOnFailureListener(exception -> {
+                    // File deletion failed
+                    Log.e("DeleteFolders", "Failed to delete file: " + item.getName(), exception);
+                });
+            }
+
+            // Delete the contents of each sub-folder recursively
+            for (StorageReference prefix : prefixes) {
+                deleteFolderContents(prefix);
+            }
+        }).addOnFailureListener(exception -> {
+            // Failed to list folder contents
+            Log.e("DeleteFolders", "Failed to list folder contents: " + folderRef.getName(), exception);
         });
     }
 }
