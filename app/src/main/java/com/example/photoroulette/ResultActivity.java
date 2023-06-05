@@ -26,9 +26,9 @@ public class ResultActivity extends AppCompatActivity {
 
     private String lobbyReference;
     private String playerName;
-    private String chooser;
     private String selectedPlayer;
     private String resultText = "";
+    private String playerOfImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,18 +43,14 @@ public class ResultActivity extends AppCompatActivity {
         if (extras != null) {
             lobbyReference = extras.getString("lobbyReference");
             playerName = extras.getString("playerName");
-            chooser = extras.getString("chooser");
             selectedPlayer = extras.getString("selectedPlayer");
+            playerOfImage = extras.getString("playerOfImage");
         }
 
-        // Reset the photoChoose value in the database to "NO"
-        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference().child("lobbies").child(lobbyReference);
-        databaseRef.child("photoChose").setValue("NO");
-
-        if (selectedPlayer.equals(chooser)) {
-            resultText = "Vrai !\n\nC'était bien la photo de '" + chooser+"'";
+        if (selectedPlayer.equals(playerOfImage)) {
+            resultText = "Vrai !\n\nC'était bien la photo de '" + playerOfImage+"'";
         } else {
-            resultText = "Faux !\n\nC'était la photo de '" + chooser+"'";
+            resultText = "Faux !\n\nC'était la photo de '" + playerOfImage+"'";
         }
         resultTextView.setText(resultText);
         restartButton.setOnClickListener(new View.OnClickListener() {

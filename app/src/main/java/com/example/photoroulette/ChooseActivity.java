@@ -44,16 +44,12 @@ public class ChooseActivity extends AppCompatActivity implements EasyPermissions
     private Button pickButton;
     private Button randomButton;
     private Button sendButton;
-    private TextView statusText;
-    private LinearLayout waitingRoomLayout;
     private LinearLayout chooserLayout;
 
     private ArrayList<Uri> imageList = new ArrayList<>();
     private Uri selectedImage = null;
     private String lobbyReference;
     private String playerName;
-    String chooser = "";
-    private boolean isLoopRunning = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,8 +63,6 @@ public class ChooseActivity extends AppCompatActivity implements EasyPermissions
         pickButton = findViewById(R.id.bt_pick);
         randomButton = findViewById(R.id.bt_random);
         sendButton = findViewById(R.id.bt_send);
-        statusText = findViewById(R.id.statusText);
-        waitingRoomLayout = findViewById(R.id.waitingRoomLayout);
         chooserLayout = findViewById(R.id.chooserLayout);
 
         // Get the lobbyReference and playerName from the extras
@@ -76,60 +70,8 @@ public class ChooseActivity extends AppCompatActivity implements EasyPermissions
         if (extras != null) {
             lobbyReference = extras.getString("lobbyReference");
             playerName = extras.getString("playerName");
-            chooser = extras.getString("chooser");
         }
 
-        if(playerName.equals(chooser)){
-            waitingRoomLayout.setVisibility(View.GONE);
-            chooserLayout.setVisibility(View.VISIBLE);
-        } else{
-            statusText.setText("En attente de la personne sélectionnée.");
-        }
-
-        final Handler handler = new Handler();
-        final int delay = 100; // Temps en millisecondes entre chaque mise à jour
-
-        // Créez votre Runnable pour la boucle de mise à jour
-        Runnable updateRunnable = new Runnable() {
-            @Override
-            public void run() {
-                FirebaseDatabase.getInstance().getReference().child("lobbies").child(lobbyReference).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            Lobby lobby = dataSnapshot.getValue(Lobby.class);
-                            String chose = lobby.getPhotoChose();
-                            if (chose.equals("YES")) {
-                                Log.w("dd", "d");
-                                isLoopRunning = false;
-                                // Start the GameActivity with the lobby ID and the player's name as extras
-                                Intent intent = new Intent(ChooseActivity.this, GameActivity.class);
-                                intent.putExtra("lobbyReference", lobbyReference);
-                                intent.putExtra("playerName", playerName);
-                                intent.putExtra("chooser", chooser);
-                                startActivity(intent);
-
-                                // Animation de transition pour la nouvelle activité
-                                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                                // Finish the Activity
-                                finish();
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        // Handle errors here
-                    }
-                });
-                if (isLoopRunning) {
-                    handler.postDelayed(this, delay);
-                }
-            }
-        };
-
-        // Planifiez la première exécution de la boucle de mise à jour
-        handler.postDelayed(updateRunnable, delay);
 
         pickButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -215,9 +157,62 @@ public class ChooseActivity extends AppCompatActivity implements EasyPermissions
                         // L'animation est terminée, démarrer la nouvelle activité
                         if (selectedImage != null) {
                             mainDB.uploadFile(selectedImage, lobbyReference);
-                            mainDB.writeDB(selectedImage.toString(), lobbyReference);
-                            FirebaseDatabase.getInstance().getReference().child("lobbies").child(lobbyReference).child("photoChose").setValue("YES");
-                            isLoopRunning = false;
+                            mainDB.writeDB(selectedImage.toString(), lobbyReference, playerName);
+                            // Start the GameActivity with the lobby ID and the player's name as extras
+                            FirebaseDatabase.getInstance().getReference().child("lobbies").child(lobbyReference).child("players").addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.exists()) {
+                                        List<String> newPlayers = new ArrayList<>();
+                                        for (DataSnapshot imageSnapshot : dataSnapshot.getChildren()) {
+                                            String playersUrl = imageSnapshot.getValue(String.class);
+                                            newPlayers.add(playersUrl);
+                                        }
+
+                                        // Retrieve the list of images from the database
+                                        DatabaseReference imagesRef = FirebaseDatabase.getInstance().getReference().child("lobbies").child(lobbyReference).child("images");
+                                        imagesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                if (dataSnapshot.exists()) {
+                                                    List<String> newImageUrl = new ArrayList<>();
+                                                    for (DataSnapshot imageSnapshot : dataSnapshot.getChildren()) {
+                                                        String imageUrl = imageSnapshot.getValue(String.class);
+                                                        newImageUrl.add(imageUrl);
+                                                    }
+
+                                                    // Check if the image and player lists have the same size
+                                                    if (newImageUrl.size() == newPlayers.size()) {
+                                                        // Start the GameActivity with the lobby ID and the player's name as extras
+                                                        Intent intent = new Intent(ChooseActivity.this, GameActivity.class);
+                                                        intent.putExtra("lobbyReference", lobbyReference);
+                                                        intent.putExtra("playerName", playerName);
+                                                        startActivity(intent);
+
+                                                        // Animation de transition pour la nouvelle activité
+                                                        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                                                        // Finish the Activity
+                                                        finish();
+                                                    } else {
+                                                        // Handle the case where the image and player lists have different sizes
+                                                        Toast.makeText(ChooseActivity.this, "The image and player lists have different sizes.", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+                                                // Handle errors here
+                                            }
+                                        });
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                    // Handle errors here
+                                }
+                            });
                         } else {
                             Toast.makeText(ChooseActivity.this, "No image selected", Toast.LENGTH_SHORT).show();
                         }

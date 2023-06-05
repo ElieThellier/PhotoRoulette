@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
@@ -101,9 +102,12 @@ public class JoinLobbyActivity extends AppCompatActivity {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
                         // The lobby exists, so add the player to the lobby
-                        Lobby lobby = dataSnapshot.getValue(Lobby.class);
-                        lobby.addPlayer(playerName);
-                        FirebaseDatabase.getInstance().getReference().child("lobbies").child(lobbyReference).setValue(lobby);
+                        DatabaseReference gameRef = FirebaseDatabase.getInstance().getReference().child("lobbies").child(lobbyReference).child("players");
+                        DatabaseReference playerRef = gameRef.child(playerName);
+                        playerRef.setValue(playerName);
+                        //Lobby lobby = dataSnapshot.getValue(Lobby.class);
+                        //lobby.addPlayer(playerName);
+                        //FirebaseDatabase.getInstance().getReference().child("lobbies").child(lobbyReference).setValue(lobby);
 
                         // Start the LobbyActivity with the lobby ID and the player's name as extras
                         Intent intent = new Intent(JoinLobbyActivity.this, LobbyActivity.class);

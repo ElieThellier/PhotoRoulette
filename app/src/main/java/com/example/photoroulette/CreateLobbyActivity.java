@@ -111,7 +111,7 @@ public class CreateLobbyActivity extends AppCompatActivity {
                         // Create a new Lobby object with the lobby Reference and the player's name and the list of players
                         List<String> players = new ArrayList<>();
                         players.add(playerName);
-                        Lobby lobby = new Lobby(lobbyReference, playerName, players, "NO", "");
+                        Lobby lobby = new Lobby(lobbyReference, playerName, players);
 
                         // Save the lobby to the database
                         database.getReference().child("lobbies").child(lobbyReference).setValue(lobby);

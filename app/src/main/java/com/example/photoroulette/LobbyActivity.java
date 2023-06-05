@@ -59,13 +59,26 @@ public class LobbyActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    Lobby lobby = dataSnapshot.getValue(Lobby.class);
-                    List<String> players = lobby.getPlayers();
-                    String playersText = "Joueurs :\n\n";
-                    for (String player : players) {
-                        playersText += "- " + player + "\n";
-                    }
-                    playersTextView.setText(playersText);
+                    DatabaseReference playersRef = FirebaseDatabase.getInstance().getReference().child("lobbies").child(lobbyReference).child("players");
+                    playersRef.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                StringBuilder playersTextBuilder = new StringBuilder("Joueurs :\n\n");
+                                for (DataSnapshot playerSnapshot : dataSnapshot.getChildren()) {
+                                    String player = playerSnapshot.getValue(String.class);
+                                    playersTextBuilder.append("- ").append(player).append("\n");
+                                }
+                                String playersText = playersTextBuilder.toString();
+                                playersTextView.setText(playersText);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            // Handle errors here
+                        }
+                    });
                 }
             }
 

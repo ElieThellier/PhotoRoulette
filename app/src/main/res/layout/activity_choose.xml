@@ -33,35 +33,6 @@
                 />
         </LinearLayout>
     </LinearLayout>
-    <LinearLayout
-        android:id="@+id/waitingRoomLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#80000000"
-        android:orientation="vertical"
-        android:padding="16dp"
-        android:visibility="visible"
-        android:gravity="center">
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center" />
-
-        <TextView
-            android:id="@+id/statusText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="En attente de ....\nIl doit choisir une photo."
-            android:textSize="20sp"
-            android:textColor="@android:color/white"
-            android:fontFamily="@font/my_font"
-            android:textStyle="bold"
-            android:textAlignment="center"/>
-
-    </LinearLayout>
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -99,7 +70,7 @@
             android:orientation="vertical"
             android:padding="16dp"
             tools:context=".ChooseActivity"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <Button
                 android:id="@+id/bt_pick"

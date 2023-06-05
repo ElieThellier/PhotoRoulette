@@ -22,20 +22,16 @@ public class Lobby {
     private String name;
     private List<String> players;
     private String lobbyReference;
-    private String currentImage; // Add this field
 
-    private String photoChose;
 
     public Lobby() {
         // Required empty constructor for Firebase
     }
 
-    public Lobby(String lobbyReference, String name, List<String> players, String photoChose, String currentImage) {
+    public Lobby(String lobbyReference, String name, List<String> players) {
         this.name = name;
         this.lobbyReference = lobbyReference;
         this.players = players;
-        this.photoChose = photoChose;
-        this.currentImage = currentImage;
     }
 
     public String getName() {
@@ -51,16 +47,6 @@ public class Lobby {
         this.players.add(player);
     }
 
-    public String getCurrentImage() {
-        return currentImage;
-    }
-
-    public void setCurrentImage(String currentImage) {
-        this.currentImage = currentImage;
-    }
-
-    public String getPhotoChose(){ return photoChose;};
-    public void setPhotoChose(String photoChose){this.photoChose = photoChose;};
 }
 
 

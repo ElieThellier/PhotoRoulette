@@ -35,27 +35,10 @@ public class MainDB {
     static void uploadFile(Uri uri, String lobbyReference) {
         // Create a reference to "filename"
         StorageReference storageRef = storage.getReference().child(lobbyReference);
-
-        // Delete existing images in the storage
         storageRef.listAll()
                 .addOnSuccessListener(new OnSuccessListener<ListResult>() {
                     @Override
                     public void onSuccess(ListResult listResult) {
-                        for (StorageReference imageRef : listResult.getItems()) {
-                            imageRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    // Image deleted successfully
-                                    Log.d(TAG, "Image deleted successfully");
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception exception) {
-                                    // Handle unsuccessful deletions
-                                    Log.e(TAG, "Error while deleting image");
-                                }
-                            });
-                        }
 
                         // Upload the new image
                         StorageReference imageRef = storageRef.child(uri.getLastPathSegment());
@@ -87,14 +70,15 @@ public class MainDB {
                 });
     }
 
-    static void writeDB(String string, String lobbyReference) {
-        DatabaseReference gameRef = database.getReference().child("lobbies").child(lobbyReference).child("currentImage");
-        gameRef.setValue(string);
+    static void writeDB(String string, String lobbyReference, String playerName) {
+        DatabaseReference gameRef = database.getReference().child("lobbies").child(lobbyReference).child("images");
+        DatabaseReference playerRef = gameRef.child(playerName);
+        playerRef.setValue(string);
     }
 
-    static void readDB(String lobbyReference) { // utile pour ouvrir une image
+    static void readDB(String lobbyReference, String playerName) { // utile pour ouvrir une image
         // Read from the database
-        DatabaseReference gameRef = database.getReference().child("lobbies").child(lobbyReference).child("currentImage");
+        DatabaseReference gameRef = database.getReference().child("lobbies").child(lobbyReference).child("images").child(playerName);
         gameRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
