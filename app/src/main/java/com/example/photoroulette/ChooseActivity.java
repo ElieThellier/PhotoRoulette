@@ -83,7 +83,7 @@ public class ChooseActivity extends AppCompatActivity implements EasyPermissions
             waitingRoomLayout.setVisibility(View.GONE);
             chooserLayout.setVisibility(View.VISIBLE);
         } else{
-            statusText.setText("En attente de "+chooser+".\nIl doit choisir une photo.");
+            statusText.setText("En attente de la personne sélectionnée.");
         }
 
         final Handler handler = new Handler();

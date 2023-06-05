@@ -26,6 +26,7 @@ public class CreateLobbyActivity extends AppCompatActivity {
     private EditText playerNameEditText;
     private Button createLobbyButton;
     private ImageButton backButton;
+    static FirebaseDatabase database = FirebaseDatabase.getInstance("https://photoroulette-43c4f-default-rtdb.europe-west1.firebasedatabase.app/");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +96,7 @@ public class CreateLobbyActivity extends AppCompatActivity {
         Random random = new Random();
         String lobbyReference = String.format("%04d", random.nextInt(10000)); // Generate a String between 0000 and 9999
 
-        FirebaseDatabase.getInstance().getReference().child("lobbies").child(lobbyReference).addListenerForSingleValueEvent(new ValueEventListener() {
+        database.getReference().child("lobbies").child(lobbyReference).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
@@ -113,7 +114,7 @@ public class CreateLobbyActivity extends AppCompatActivity {
                         Lobby lobby = new Lobby(lobbyReference, playerName, players, "NO", "");
 
                         // Save the lobby to the database
-                        FirebaseDatabase.getInstance().getReference().child("lobbies").child(lobbyReference).setValue(lobby);
+                        database.getReference().child("lobbies").child(lobbyReference).setValue(lobby);
 
                         // Start the LobbyActivity with the lobby ID and the creator's name as extras
                         Intent intent = new Intent(CreateLobbyActivity.this, LobbyActivity.class);

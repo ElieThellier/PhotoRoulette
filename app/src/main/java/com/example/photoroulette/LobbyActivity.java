@@ -33,6 +33,7 @@ public class LobbyActivity extends AppCompatActivity {
     private ImageButton backButton;
     ArrayList<String> players = new ArrayList<>();
     String chooser = "";
+    private ValueEventListener playersValueEventListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +55,7 @@ public class LobbyActivity extends AppCompatActivity {
         // Set the lobbyReference text
         lobbyReferenceTextView.setText("Nom de la salle :\n\n"+lobbyReference);
 
-        // Retrieve the list of players from the database and display them
-        FirebaseDatabase.getInstance().getReference().child("lobbies").child(lobbyReference).addListenerForSingleValueEvent(new ValueEventListener() {
+        playersValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
@@ -73,7 +73,9 @@ public class LobbyActivity extends AppCompatActivity {
             public void onCancelled(DatabaseError databaseError) {
                 // Handle errors here
             }
-        });
+        };
+
+        FirebaseDatabase.getInstance().getReference().child("lobbies").child(lobbyReference).addValueEventListener(playersValueEventListener);
 
         startGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -170,6 +172,7 @@ public class LobbyActivity extends AppCompatActivity {
         // Remove the player from the lobby
         DatabaseReference lobbyRef = FirebaseDatabase.getInstance().getReference().child("lobbies").child(lobbyReference);
         DatabaseReference playersRef = lobbyRef.child("players");
+        playersRef.removeEventListener(playersValueEventListener);
 
         playersRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
