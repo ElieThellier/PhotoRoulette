@@ -22,7 +22,7 @@ La database utilisée est [Firebase](https://firebase.google.com/). Il s'agit d'
 
 ## Déroulé d'une partie
 
-Lorsque l'application est lancée, le joueur à le choix entre créer un lobby ou en rejoindre. Lorsqu'il créer un lobby, il rentre son pseudo et est envoyé dans le lobby. Ce lobby possède un identificant (code unique à 4 chiffres, facilement augmentable), ce qui permet à d'autres joueurs de le rejoindre.
+Lorsque l'application est lancée, le joueur à le choix entre créer un lobby ou en rejoindre un. Lorsqu'il créer un lobby, il rentre son pseudo et est envoyé dans le lobby. Ce lobby possède un identificant (code unique à 4 chiffres, facilement augmentable), ce qui permet à d'autres joueurs de le rejoindre.
 
 Les joueurs présents dans un lobby peuvent démarrer la partie. Dans la phase de jeu, tous les joueurs choisissent une image (ils peuvent choisir manuellement dans leur galerie ou laisser l'aléatoire faire les choses) puis l'envoie à la base de données (Firebase Storage).
 
@@ -32,8 +32,8 @@ Finalement, une page de résultat indique si le joueur a eu bon ou tort. Tous le
 
 ## Améliorations possibles
 
-Ajouter un score des joueurs et classement par lobby.
+-Ajouter un score des joueurs et classement par lobby.
 
-Faire une version iOS.
+-Faire une version iOS.
 
-Créer des bornes de jeu permettant de jouer tous ensemble sur un même écran.
+-Créer des bornes de jeu permettant de jouer tous ensemble sur un même écran.
