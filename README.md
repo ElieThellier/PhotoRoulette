@@ -32,8 +32,6 @@ Finalement, une page de résultat indique si le joueur a eu bon ou tort. Tous le
 
 ## Améliorations possibles
 
--Ajouter un score des joueurs et classement par lobby.
-
--Faire une version iOS.
-
--Créer des bornes de jeu permettant de jouer tous ensemble sur un même écran.
+- Ajouter un score des joueurs et classement par lobby.
+- Faire une version iOS.
+- Créer des bornes de jeu permettant de jouer tous ensemble sur un même écran.
