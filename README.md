@@ -10,7 +10,7 @@ PhotoRoulette est un jeu multijoueur sur smartphone inspiré d'un jeu du même n
 
 Pour résoudre le problème de vie privée, nous avons ajouté une fonctionnalité pour choisir manuellement la photo envoyée aux autres joueurs.
 
-![logo](Sans titre-1.png)
+![logo](Sans titre-1.jpg)
 
 ## Structure du projet
 
